@@ -8,23 +8,23 @@
 
 // 定义错误位置结构体
 typedef struct {
-    int line;       //表示错误发生行数
-    int column;     //表示错误发生列数（字符位置）
-} ErrorLocation;  //定义了一个结构名为ErrorLocation的结构体
+    int line;       
+    int column;     
+} ErrorLocation;  
 
 
 bool isValidJson(const char* json, ErrorLocation* errorLocation) {
     // 初始化错误位置errorLocation，设置行数为 1，列数为 1
-    errorLocation->line = 1;  //行
-    errorLocation->column = 1;  //列
-    int key[1024];  //3种状态
+    errorLocation->line = 1;  
+    errorLocation->column = 1;  
+    int key[1024];  //3种状态  
     // 栈用于检查括号匹配
-    char stack[1024] = { 0 };
-    int stackTop = -1;
+    char stack[1024] = { 0 };   
+    int stackTop = -1;    
     for (int i = 0;i < 1024;i++)
         key[i] = 1;
     // 循环遍历 JSON 字符串
-    for (int i = 0; json[i] != '\0'; ++i) {
+    for (int i = 0; json[i] != '\0'; i++) {
 
         char c = json[i];
         // 更新行列信息
@@ -38,17 +38,17 @@ bool isValidJson(const char* json, ErrorLocation* errorLocation) {
 
         // 检查括号匹配
         if (c == '{' || c == '[') {
-            stack[++stackTop] = c;
+            stack[++stackTop] = c;    
             if (c == '[')
                 key[stackTop] = 2;
             continue;
 
         }
-        else if (c == '}' || c == ']') {
+        else if (c == '}' || c == ']') {          
             if (stackTop == -1) {
                 return false; // 没有匹配的开括号
             }
-            char openBracket = (c == '}') ? '{' : '[';
+            char openBracket = (c == '}') ? '{' : '[';   //如果当前字符 c 是 '}'，则 openBracket 的值为 '{'；否则，openBracket 的值为 '['。
             if (stack[stackTop] != openBracket) {
                 return false; // 括号不匹配
             }
@@ -60,8 +60,8 @@ bool isValidJson(const char* json, ErrorLocation* errorLocation) {
         if (isPartOfNumber(c)) {
             int num = 0;
             const char* nextChar = checkNumber(json + i, &num);
-            errorLocation->column += num;
-            if (!nextChar) {
+            errorLocation->column += num;  // 将解析出的数字的位数（列数）累加到 errorLocation 结构中。
+            if (!nextChar) {  //也就是说checkNumber返回Null
 
                 return false; // 数字格式不合法
             }
